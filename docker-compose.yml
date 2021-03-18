@@ -46,6 +46,7 @@ services:
     ports:
       - "${MYSQL_PORT}:3306"
     volumes:
+      # wsl 上有问题,所以使用卷
       # - ./mysql/data:/var/lib/mysql
       - mysqlData:/var/lib/mysql
       - ./mysql/conf/my.cnf:/etc/mysql/conf.d/my.cnf
@@ -77,6 +78,6 @@ services:
 networks:
   pearProject:
     driver: bridge
+# wsl 上有问题,所以使用卷
 volumes:
   mysqlData:
-    # external: true
