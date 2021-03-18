@@ -1,0 +1,82 @@
+version: '3'
+
+services:
+  nginx:
+    image: docker.io/nginx:1.15.7-alpine
+
+    expose:
+      - "80"
+    ports:
+      - "${HTTP_PORT}:80"
+    volumes:
+      - "./phpSource:/var/www/html"
+      - "./nginx/conf.d:/etc/nginx/conf.d"
+      - "./nginx/log:/var/log/nginx"
+    restart: always
+    networks:
+      - pearProject
+    depends_on:
+      - php
+      
+  php:
+    image: docker.io/liaoyunlong/php:7.2.2-fpm-lu
+    expose:
+      - "9000"
+    volumes:
+      - "./phpSource:/var/www/html"
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DATA_BASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PWD}
+      MYSQL_HOST: ${MYSQL_HOST}
+      REDIS_HOST: ${REDIS_HOST}
+      TZ: Asia/Shanghai
+    networks:
+      pearProject:
+    depends_on:
+      - mysql
+      - redis
+    
+  mysql:
+    image: docker.io/mysql:5.7.28
+    restart: always
+    expose:
+      - "3306"
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      # - ./mysql/data:/var/lib/mysql
+      - mysqlData:/var/lib/mysql
+      - ./mysql/conf/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql/logs:/logs
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PWD}
+      MYSQL_DATABASE: ${DATA_BASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PWD}
+    networks:
+      pearProject:
+        aliases: 
+          - ${MYSQL_HOST}
+      
+  redis:
+    image: docker.io/redis:5.0-alpine
+    volumes:
+      - ./redis/data:/data
+    ports:
+      - "${REDIS_PORT}:6379"
+    expose:
+      - "6379"
+    restart: always
+    networks:
+      pearProject:
+        aliases: 
+          - ${REDIS_HOST}
+
+networks:
+  pearProject:
+    driver: bridge
+volumes:
+  mysqlData:
+    # external: true
