@@ -43,6 +43,11 @@ services:
     restart: always
     expose:
       - "3306"
+    command: >
+          bash -c "
+          chmod 644 /etc/mysql/conf.d/*.cnf
+          && /entrypoint.sh mysqld
+          "
     ports:
       - "${MYSQL_PORT}:3306"
     volumes:

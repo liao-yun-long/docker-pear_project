@@ -1,6 +1,4 @@
 
-- 修改`mysql/conf/my.cnf` 的读写权限为`644`(本人wsl上开发,不方便设置)
-
 - 检查配置信息`.env`和`phpSource/.env`中的数据库与redis配置是否保持一致
 
 - 运行容器`docker-compose up -d`
