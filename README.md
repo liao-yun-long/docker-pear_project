@@ -5,6 +5,22 @@
 
 - 进入php容器`docker exec -it 容器ID /bin/bash`,安装依赖`composer install`
 
+- 修改`phpSource/extend/service/FileService.php`的`getBaseUriLocal`方法
+
+```php
+    /**
+     * 获取服务器URL前缀
+     * @return string
+     */
+    public static function getBaseUriLocal()
+    {
+        $appRoot = request()->root(true);  // 去掉参数 true 将获得相对地址
+        $uriRoot = preg_match('/\.php$/', $appRoot) ? dirname($appRoot) : $appRoot;
+        $uriRoot = in_array($uriRoot, ['/', '\\']) ? '' : $uriRoot;
+        // return "{$uriRoot}/"; // 
+        return "http://nginx/";
+    }
+```
 - 前后端代码放在同一个nginx中,前端目录如下
 
     - `js`
